@@ -32,7 +32,8 @@ public:
     Movie(string id, string title, string genre, string originalLanguage, string overview, string popularity,
           string productionCompany, string releaseDate,
           string budget, string revenue, string runTime, string status, string tagline, string voteAverage,
-          string voteCount, string poster, string backdrop){
+          string voteCount, string poster, string backdrop) {
+
         _id = id;
         _title = title;
         _genres = genre;
@@ -53,7 +54,8 @@ public:
     }
 
 
-    void fileReader(const string& dataset) {
+    void fileReader(const string& dataset)
+    {
         ifstream inFile(dataset);
         if (inFile.is_open()) {
 
@@ -75,15 +77,6 @@ public:
             string temp_voteCount;
             string poster;
             string backdrop;
-
-            /// need to convert to
-            int id;
-            float popularity;
-            int budget;
-            int revenue;
-            int runtime;
-            float voteAverage;
-            int voteCount;
 
             /// ignore header
             string header;
@@ -118,7 +111,9 @@ public:
             }
         }
     }
-    void prinObject(const Movie& object){
+
+    void prinObject(const Movie& object)
+    {
         cout << "-------------------------------------------------------------------------------" << endl;
         cout << "Movie - " << object._title << " (ID: " << object._id << ")" << endl << "Runtime: (" << object._runTime << " minutes)" << endl;
         cout << "Genres: ";
@@ -127,9 +122,10 @@ public:
         cout << "Language (" << object._originalLanguage << "), " << "Released (" << object._releaseDate << "), " << "Budget: " << object._budget << " Revenue: " << object._revenue << endl;
         cout << "Popularity of Movie: " << object._popularity << " is based on " << object._voteAverage << " voting average from " << object._voteCount << " voters!" << endl;
     }
-
-
 };
+
+///=====================================================================================================================
+
 class Map {
     class TreeNode {
     public:
@@ -257,7 +253,6 @@ class Map {
                 else {
                     root = rotateRightLeft(root);
                 }
-
             }
         }
         else if (root->Name > name) {
@@ -479,7 +474,9 @@ public:
         return movies;
     }
 };
+
 ///=====================================================================================================================
+
 class max_heap {
 private:
     struct Node {
@@ -538,7 +535,6 @@ public:
         catch (const std::invalid_argument& ia) {
             return;
         }
-
         /// Now get the element and call for the heapify up function
         int the_index = size_heap() - 1;
         heapify_u(the_index);
