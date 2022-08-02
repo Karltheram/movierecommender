@@ -1,220 +1,257 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <fstream>
 #include <string>
-#include <sstream>
-
-
+#include "Movie.h"
+#include <chrono>
+using namespace std::chrono;
 using namespace std;
 
-using namespace std;
-class Movie {
-private:
-    string _id;
-    string _title;
-    vector<string> _genres;
-    string _originalLanguage;
-    string _overview;
-    string _popularity;
-    string _productionCompany;
-    string _releaseDate;
-    string _budget;
-    string _revenue;
-    string _runTime;
-    string _status;
-    string _tagline;
-    string _voteAverage;
-    string _voteCount;
-    string _poster;
-    string _backdrop;
-    int movieCount = 0;
+vector<Movie> getRecomendationsHeap(const Movie &object,vector<Movie> allmovies)
+{
+    vector<Movie> topFive;
+    string movietitle = object._title;
+    string moviecompany = object._productionCompany;
+    string genre = object._genres;
 
-public:
-    vector<Movie> rolodex;
-    Movie() {};
-
-    Movie(string id, string title, vector<string> genres, string originalLanguage, string overview, string popularity, string productionCompany, string releaseDate,
-          string budget, string revenue, string runTime, string status, string tagline, string voteAverage, string voteCount, string poster, string backdrop)
-    {
-        _id = id;
-        _title = title;
-        _genres = genres;
-        _originalLanguage = originalLanguage;
-        _overview = overview;
-        _popularity = popularity;
-        _productionCompany = productionCompany;
-        _releaseDate = releaseDate;
-        _budget = budget;
-        _revenue = revenue;
-        _runTime = runTime;
-        _status = status;
-        _tagline = tagline;
-        _voteAverage = voteAverage;
-        _voteCount = voteCount;
-        _poster = poster;
-        _backdrop = backdrop;
-
+    max_heap sort;
+    topFive = sort.getelement(moviecompany, genre,movietitle,allmovies);
+    for (int i = 0; i <  topFive.size(); ++i) {
+        sort.insert_key(topFive[i]);
     }
-
-    void fileReader(string dataset)
-    {
-        ifstream inFile(dataset);
-        if (inFile.is_open()) {
-
-            /// header titles
-            string temp_id;
-            string title;
-            string genre;
-            string originalLanguage;
-            string overview;
-            string temp_popularity;
-            string productionCompany;
-            string releaseDate;
-            string temp_budget;
-            string temp_revenue;
-            string temp_runtime;
-            string status;
-            string tagline;
-            string temp_voteAverage;
-            string temp_voteCount;
-            string poster;
-            string backdrop;
-
-            /// need to convert to
-            int id;
-            float popularity;
-            int budget;
-            int revenue;
-            int runtime;
-            float voteAverage;
-            int voteCount;
-
-            /// ignore header
-            string header;
-            getline(inFile, header);
-
-            /// grab essentials
-            while (!inFile.eof()) {
-                getline(inFile, temp_id, ',');
-                getline(inFile, title, ',');
-                getline(inFile, genre, ',');
-                getline(inFile, originalLanguage, ',');
-                getline(inFile, overview, ',');
-                getline(inFile, temp_popularity, ',');
-                getline(inFile, productionCompany, ',');
-                getline(inFile, releaseDate, ',');
-                getline(inFile, temp_budget, ',');
-                getline(inFile, temp_revenue, ',');
-                getline(inFile, temp_runtime, ',');
-                getline(inFile, status, ',');
-                getline(inFile, tagline, ',');
-                getline(inFile, temp_voteAverage, ',');
-                getline(inFile, temp_voteCount, ',');
-                getline(inFile, poster, ',');
-                getline(inFile, backdrop, '\n');
-
-                /// list of genres per title
-                vector<string> genres;
-                stringstream ss(genre);
-                while (ss.good()) {
-                    string substr;
-                    getline(ss,substr, '-');
-                    genres.push_back(substr);
-                }
-
-                /// conversions from string to other
-                /*id = stoi(temp_id);
-                popularity = stof(temp_popularity);
-                budget = stoi(temp_budget);
-                revenue = stoi(temp_revenue);
-                runtime = stoi(temp_runtime);
-                voteAverage = stof(temp_voteAverage);
-                voteCount = stoi(temp_voteCount);*/
-
-                Movie bundle(temp_id, title, genres, originalLanguage, overview, temp_popularity, productionCompany, releaseDate,
-                             temp_budget, temp_revenue, temp_runtime, status, tagline, temp_voteAverage, temp_voteCount, poster, backdrop);
-                rolodex.push_back(bundle);
-                movieCount++;
-            }
+    topFive=sort.top_five();
+    int ranker=1;
+    for (int i = 0; i <topFive.size(); i++) {
+        cout<<ranker<< ": " << topFive[i]._title<< endl;
+        ranker++;
+        if(ranker==6){
+            break;
         }
     }
+    return topFive;
+}
 
-    void print() {
-        int count = 0;
-        int ticker = 2;
-        for (int i = 0; i < rolodex.size(); ++i) {
-            cout << "Movie - " << rolodex[i]._title << " (ID: " << rolodex[i]._id << ")" << endl << "Runtime: (" << rolodex[i]._runTime << " minutes)" << endl;
-            cout << "Genres: ";
-            int counter = 0;
-            for (int j = 0; j < rolodex[i]._genres.size(); ++j) {
-                if (counter != rolodex[i]._genres.size() - 1)
-                    cout << rolodex[i]._genres[j] << "-";
-                else
-                    cout << rolodex[i]._genres[j];
-                counter++;
-            }
-            cout << endl << "\nTagline: " << rolodex[i]._tagline << endl;
-            cout << "Language (" << rolodex[i]._originalLanguage << "), " << "Released (" << rolodex[i]._releaseDate << "), " << "Budget: " << rolodex[i]._budget << " Revenue: " << rolodex[i]._revenue << endl;
-            cout << "Popularity of Movie: " << rolodex[i]._popularity << " is based on " << rolodex[i]._voteAverage << " voting average from " << rolodex[i]._voteCount << " voters!" << endl;
-            cout << "\n" << ticker << endl;
-            cout << "-------------------------------------------------------------------------------" << endl;
+vector<Movie> getRecomendationsMap(const Movie &object, UnorderedMap SameCompanies, UnorderedMap SameGenres)
+{
+    string movietitle = object._title;
+    string moviecompany = object._productionCompany;
+    string genre = object._genres;
+    vector<Movie> samecompanymovies;
+    vector<Movie> samegenremovies;
+    Map Reccomendations;
+    samecompanymovies = SameCompanies.getSameCompanymovies(moviecompany, samecompanymovies);
+    samegenremovies = SameGenres.getSameGenreMovies(genre, samegenremovies);
 
-            count++;
-            ticker++;
-            if (count == 100)
-                break;
+    /// Combine the vectors
+    samecompanymovies.insert(samecompanymovies.end(), samegenremovies.begin(), samegenremovies.end());
+
+    /// Now go through and find the most popular movies
+    /// Get the popularity as key and the object as value
+    for (int i=0; i < samecompanymovies.size(); i++) {
+        if (samecompanymovies[i]._title == movietitle) {
+            continue;
         }
+        int popularityvalue = stoi(samecompanymovies[i]._popularity);
+        Reccomendations.insert(samecompanymovies[i]._title, popularityvalue, "number", samecompanymovies[i]);
     }
 
-};
+    vector<Movie> inorder;
+    inorder = Reccomendations.gettheTopMovies();
+    vector<Movie> thetop;
+    int ranker=1;
+    for (int i = inorder.size()-1; i > 0; --i) {
+        cout << ranker << ": " << inorder[i]._title << endl;
+        thetop.push_back(inorder[i]);
+        ranker++;
+        if (ranker == 6){
+            break;
+        }
+    }
+    Reccomendations.erase();
+    return thetop;
+}
 
 int main()
 {
+    cout << "Loading Website" << endl;
+    auto start = high_resolution_clock::now();
     Movie manager;
     manager.fileReader("movies.csv");
+    vector<Movie> allmovies = manager.rolodex;
 
-    int menuselection;
-    string movietitle;
-    cout<< "Welcome to the Movie Recommender!" <<endl;
-    cout<< "What movie do you want to have reccomendations with?" <<endl;
-    getline(cin,movietitle);
-    std::for_each(movietitle.begin(), movietitle.end(), [](char & c) {
-        c = ::tolower(c);
-    });
-    //go look for this movie top 3 similar results by name first then recent release date
-    //if its not the 3 movies prompt to ask again
+    /// insert Movie Companies,Genres, and Movie Titles as keys with
+    /// movies as values with chaining into the hash table
+    UnorderedMap SameGenres(1000);
+    UnorderedMap SameCompanies(1000);
+    UnorderedMap Movietitles(1000);
 
-    cout<<movietitle<<endl;
-    cout<< "What algorithm do you want to work with?" <<endl;
-    cout << "1. B+ Tree" <<endl;
-    cout << "2. Maps"<<endl;
-    cout << "Please enter the number"<<endl;
-    cin >> menuselection;
-    while(true){
-        if (!cin){
-            cin.clear();
-            cin.ignore(100, '\n');
+    /// The map to sort the order with the vector to store the top 5
+    Map ReccomendationsAlgorithm;
+
+    /// The vector that will contain the reccomendations
+    vector<Movie> TheRecommendations;
+
+    /// Create the Unordered Maps
+    for (int i = 0; i < allmovies.size(); i++) {
+        SameGenres.insertGenres(allmovies[i]);
+        SameCompanies.insertCompanies(allmovies[i]);
+        Movietitles.insertMovietiles(allmovies[i]);
+    }
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds> (stop - start);
+
+    cout << "The load process took: " << duration.count() << " microseconds!" << endl << endl;
+
+    /// The User Interface
+    cout << "-------------------------------------------------------------------------------" << endl;
+    cout << "Welcome to the Movie Recommender!" << endl;
+    cout << "Our recommender works on a criteria:" << endl;
+    cout << "The movie with the highest popularity in "
+            "the same genre and movie studio is the priority." << endl;
+    cout << "If there are no other movies in the movie studio then "
+            "the movie in the same genre will go next."<< endl;
+
+
+    /// The loop for the user Interface if the user wants to keep going
+    while (true) {
+        int menuselection = 0;
+        string movietitle;
+        Movie themovie;
+        cin.clear();
+        cout << "-------------------------------------------------------------------------------" << endl;
+        cout << "What movie do you want to search?" << endl;
+        getline(cin, movietitle);
+        if (movietitle.empty()) {
+            getline(cin, movietitle);
         }
-        cout << "Wrong Input"<<endl;
-        cout << "Please enter the number again"<<endl;
+
+        /// Input error check
+        while (true) {
+            if (!(Movietitles.titleexists(movietitle))) {
+                cin.clear();
+                cin.ignore(100, '\n');
+            }
+            else {
+                if (Movietitles.titleexists(movietitle)) {
+                    start = high_resolution_clock::now();
+                    themovie = Movietitles.getobject(movietitle);
+                    break;
+                }
+            }
+            cout << "Cannot find the movie" << endl;
+            cout << "Please type the movie title correctly" << endl;
+            getline(cin, movietitle);
+        }
+
+        cin.clear();
+        cout << endl;
+        manager.prinObject(themovie);
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds>(stop - start);
+
+        cout << "The finding and printing the movie took: "
+             << duration.count() << " microseconds!" << endl << endl;
+        cout << "-------------------------------------------------------------------------------" << endl;
+        cout << "What algorithm do you want to work with to find your top 5 recommendations?" << endl;
+        cout << "1. Heapsort" << endl;
+        cout << "2. Maps" << endl;
+        cout << "Please enter the number" << endl;
         cin >> menuselection;
-        if (menuselection == 1){
-            break;
-        }else if (menuselection==2){
-            break;
+
+        while (true) {
+            if (!cin) {
+                cin.clear();
+                cin.ignore(100, '\n');
+            }
+            else if (menuselection == 1) {
+                cout << "Here are your TOP 5 Recommendations" << endl;
+                start = high_resolution_clock::now();
+                TheRecommendations = getRecomendationsHeap(themovie, allmovies);
+                break;
+            }
+            else if (menuselection == 2) {
+                cout << "Here are your TOP 5 Recommendations" << endl;
+                start = high_resolution_clock::now();
+                TheRecommendations = getRecomendationsMap(themovie, SameCompanies, SameGenres);
+                break;
+            }
+            cout << "Wrong Input" << endl;
+            cout << "Please enter the number again" << endl;
+            cin >> menuselection;
         }
+
+        cin.clear();
+        cout << endl;
+        stop = high_resolution_clock::now();
+        duration = duration_cast<microseconds> (stop - start);
+
+        cout << "Finding recommendations took: "
+             << duration.count() << " microseconds!" << endl << endl;
+        cout << "-------------------------------------------------------------------------------" << endl;
+
+        /// Learn more about a movie recommended to you
+        int menuselector2;
+        int counter = 1;
+        cout << "If you want to learn more about movies we recommended to you, please type the number associated to the movie" << endl;
+        cout << "If you want to stop the Movie Recommender, please type 6 to exit" << endl;
+        cout << "Search again press 0" << endl;
+
+        cin >> menuselector2;
+        while (true) {
+            if (!cin) {
+                cin.clear();
+                cin.ignore(100, '\n');
+            }
+            else if (menuselector2 == 6) {
+                exit(1);
+            }
+            else if(menuselector2==0){
+                break;
+            }
+            else {
+                for (int i=0; i < TheRecommendations.size(); i++) {
+                    if (menuselector2 == counter) {
+                        start = high_resolution_clock::now();
+                        manager.prinObject(TheRecommendations[i]);
+                        break;
+                    }
+                    counter++;
+                }
+                break;
+            }
+            cout << "Wrong Input" << endl;
+            cout << "Please enter the number again" << endl;
+            cin >> menuselector2;
+        }
+        if (menuselector2 != 0){
+            cin.clear();
+            stop = high_resolution_clock::now();
+            duration = duration_cast<microseconds>(stop - start);
+
+            cout << "Printing the movie took: "<< duration.count() << " microseconds!" << endl <<endl;
+            cout << "-------------------------------------------------------------------------------" << endl;
+
+            /// Loop again to continue exploring our recommendations
+            cout << "If you would like to use the movie recommender again or exit the program completely please type 0 or 1" << endl;
+            int menuselector3;
+            cin >> menuselector3;
+            while (true) {
+                if (!cin) {
+                    cin.clear();
+                    cin.ignore(100, '\n');
+                }
+                else if (menuselector3 == 0) {
+                    break;
+                }
+                else if (menuselector3 == 1) {
+                    exit(1);
+                }
+                cout << "Wrong Input" << endl;
+                cout << "Please enter the number again" << endl;
+                cin >> menuselector3;
+            }
+        }
+        cin.clear();
+        TheRecommendations.clear();
+        ReccomendationsAlgorithm.erase();
     }
-
-    switch (menuselection) {
-        case 1:
-            //calls the function
-            break;
-        case 2:
-            //calls the function
-            break;
-    }
-
-
-    return 0;
 }
