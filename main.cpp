@@ -72,8 +72,9 @@ vector<Movie> getRecomendationsMap(const Movie &object, UnorderedMap SameCompani
 
 int main()
 {
-    cout << "Loading Website" << endl;
     auto start = high_resolution_clock::now();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds> (stop - start);
     Movie manager;
     manager.fileReader("movies.csv");
     vector<Movie> allmovies = manager.rolodex;
@@ -96,10 +97,6 @@ int main()
         SameCompanies.insertCompanies(allmovies[i]);
         Movietitles.insertMovietiles(allmovies[i]);
     }
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds> (stop - start);
-
-    cout << "The load process took: " << duration.count() << " microseconds!" << endl << endl;
 
     /// The User Interface
     cout << "-------------------------------------------------------------------------------" << endl;
