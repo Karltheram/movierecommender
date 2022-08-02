@@ -3,9 +3,9 @@
 #include <string>
 #include "Movie.h"
 #include <chrono>
+
 using namespace std::chrono;
 using namespace std;
-
 vector<Movie> getRecomendationsHeap(const Movie &object,vector<Movie> allmovies)
 {
     vector<Movie> topFive;
@@ -18,12 +18,12 @@ vector<Movie> getRecomendationsHeap(const Movie &object,vector<Movie> allmovies)
     for (int i = 0; i <  topFive.size(); ++i) {
         sort.insert_key(topFive[i]);
     }
-    topFive=sort.top_five();
+    topFive = sort.top_five();
     int ranker=1;
     for (int i = 0; i <topFive.size(); i++) {
-        cout<<ranker<< ": " << topFive[i]._title<< endl;
+        cout<<ranker<< ": " << topFive[i]._title << endl;
         ranker++;
-        if(ranker==6){
+        if (ranker == 6){
             break;
         }
     }
@@ -62,7 +62,7 @@ vector<Movie> getRecomendationsMap(const Movie &object, UnorderedMap SameCompani
         cout << ranker << ": " << inorder[i]._title << endl;
         thetop.push_back(inorder[i]);
         ranker++;
-        if (ranker == 6){
+        if (ranker == 6) {
             break;
         }
     }
@@ -107,9 +107,8 @@ int main()
     cout << "Our recommender works on a criteria:" << endl;
     cout << "The movie with the highest popularity in "
             "the same genre and movie studio is the priority." << endl;
-    cout << "If there are no other movies in the movie studio then "
+    cout << "If there are no other movies in the movie studio then"
             "the movie in the same genre will go next."<< endl;
-
 
     /// The loop for the user Interface if the user wants to keep going
     while (true) {
@@ -204,7 +203,7 @@ int main()
             else if (menuselector2 == 6) {
                 exit(1);
             }
-            else if(menuselector2==0){
+            else if (menuselector2 == 0) {
                 break;
             }
             else {
