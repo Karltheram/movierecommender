@@ -11,4 +11,3 @@ We cannot add the dataset in the repository because it is more than 100 MB of Gi
 https://www.kaggle.com/datasets/akshaypawar7/millions-of-movies
 You just have to download the csv file and add it to the project.
 
-Be sure to delete the credits and reccomendations columns because they were not used and would cause errors with our reader function.
